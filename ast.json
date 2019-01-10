@@ -1,0 +1,44 @@
+{
+    "type": "Program",
+    "body": [
+        {
+            "type": "FunctionDeclaration",
+            "id": {
+                "type": "Identifier",
+                "name": "dd"
+            },
+            "params": [],
+            "body": {
+                "type": "BlockStatement",
+                "body": [
+                    {
+                        "type": "ExpressionStatement",
+                        "expression": {
+                            "type": "AssignmentExpression",
+                            "operator": "=",
+                            "left": {
+                                "type": "MemberExpression",
+                                "computed": false,
+                                "object": {
+                                    "type": "ThisExpression"
+                                },
+                                "property": {
+                                    "type": "Identifier",
+                                    "name": "target"
+                                }
+                            },
+                            "right": {
+                                "type": "Literal",
+                                "value": 0,
+                                "raw": "0"
+                            }
+                        }
+                    }
+                ]
+            },
+            "generator": false,
+            "expression": false
+        }
+    ],
+    "sourceType": "script"
+}
