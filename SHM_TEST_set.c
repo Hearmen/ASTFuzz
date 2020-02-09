@@ -3,6 +3,7 @@
 // run fuzzilli patched javascript engine with environmentvariable SHM_ID=/SHM_TEST
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/mman.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -20,12 +21,18 @@ int main(int argc, char *argv[])
 	pid_t pid;
 	void *addr;
 	char data[STORAGE_SIZE];
-
+    char* shm_key = getenv("SHM_ID");
+        
+    
 	pid = getpid();
 	sprintf(data, DATA, pid);
 
 	// get shared memory file descriptor (NOT a file)
-	fd = shm_open(STORAGE_ID, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+	if (shm_key)
+        fd = shm_open(shm_key, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+    else
+        fd = shm_open(STORAGE_ID, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+
 	if (fd == -1)
 	{
 		perror("open");

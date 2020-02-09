@@ -1,6 +1,7 @@
 //compile with gcc -o SHM_TEST_get SHM_TEST_get.c -lrt
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -25,11 +26,16 @@ int main(int argc, char *argv[])
 	struct shmem_data* data1;
 	pid_t pid;
 	void *addr;
+    char* shm_key = getenv("SHM_ID");
 
 	pid = getpid();
 
 	// get shared memory file descriptor (NOT a file)
-	fd = shm_open(STORAGE_ID, O_RDONLY, S_IRUSR | S_IWUSR);
+	if (shm_key)
+        fd = shm_open(shm_key, O_RDONLY, S_IRUSR | S_IWUSR);
+    else
+        fd = shm_open(STORAGE_ID, O_RDONLY, S_IRUSR | S_IWUSR);
+
 	if (fd == -1)
 	{
 		perror("open");

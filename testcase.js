@@ -275,7 +275,7 @@ function testRun(i){
         if (err.signal == 'SIGSEGV') {console.error(err.signal,process.pid); return 0;}
     }
     console.error("done");
-    sleep(10000);
+//    sleep(10000);
     return 1;
 }
 
