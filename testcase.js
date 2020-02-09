@@ -264,7 +264,7 @@ function testTraverse(){
 
 function testRun(i){
     testMutate();
-    console.error("started",i, 1.0*success/counter, counter);
+    console.error("started",i, 1.0*success/counter, success);
     counter++;
     try {
         console.error(child_process.execFileSync("/media/detlef/Fast/KALI/fuzzer/gecko-dev/js/src/fuzzbuild_OPT.OBJ/dist/bin/js",[tmpfile],{timeout:4000,stdio:'pipe'}));
