@@ -148,8 +148,10 @@ class PathManager{
     __updateValueMap(node, path){  
         var objPath;
         objPath = this.acquire(node.object);
-        for(let prop of this.__valueTable.get(objPath._valueType.__symIndex).__props){
-            path.valueMap.set(prop[0],prop[1]);
+        if (objPath._valueType) {
+            for(let prop of this.__valueTable.get(objPath._valueType.__symIndex).__props){
+                path.valueMap.set(prop[0],prop[1]);
+            }
         }
     }
 
@@ -528,7 +530,7 @@ class PathManager{
             case "MemberExpression":
                 let objPath = this.acquire(node.left.object);
                 let propPath = this.acquire(node.left.property);
-                if(objPath._valueType.__type >= 0x0010){  // make sure obj is not a literal
+                if(objPath._valueType && objPath._valueType.__type >= 0x0010){  // make sure obj is not a literal
                     valueInfo = this.__valueTable.get(objPath._valueType.getSymIndex(0x70));
                     if(/Identifier/.test(propPath.node.type)){
                         valueInfo.updateProp(propPath.node.name,right_path.getType());
@@ -634,7 +636,7 @@ class PathManager{
         var path =   this.acquire(node); 
         var objPath = this.acquire(node.object);
         var propPath = this.acquire(node.property);
-        if(objPath._valueType.__type >= 0x10 || objPath._valueType.__type&0x0004 ){   // not a literal
+        if(objPath._valueType && (objPath._valueType.__type >= 0x10 || objPath._valueType.__type&0x0004 )){   // not a literal
             var objType = this.__valueTable.get(objPath._valueType.getSymIndex(0x74)); // get the value from valueTable
             if(/Identifier/.test(node.property.type)){  // update the value of current path
                 if(objType.hasProp(node.property.name)){
@@ -650,9 +652,11 @@ class PathManager{
                 path.setPathValue(new ValueType(0x00ff,["anyType"]));
             }
         }
-        for(let availableType of objPath._valueType.__symIndex){
-            for(let [k, v] of this.__valueTable.get(availableType).__props){
-                this.__currentValueMap.delete(k);
+        if (objPath._valueType) {
+            for(let availableType of objPath._valueType.__symIndex){
+                for(let [k, v] of this.__valueTable.get(availableType).__props){
+                    this.__currentValueMap.delete(k);
+                }
             }
         }
         if(/Identifier/.test(propPath.node.type)){
@@ -744,7 +748,7 @@ class PathManager{
         let path, objPath, currentEnv;
         path = this.acquire(node);
         objPath = this.acquire(node.object);
-        if(path){
+        if(path && objPath._valueType){
             for(let availableType of objPath._valueType.__symIndex){
                 for(let [k,v] of this.__valueTable.get(availableType).__props){  // for(let [k,v] of this.__valueTable.get(availableType)){ 
                     this.__currentValueMap.delete(k);

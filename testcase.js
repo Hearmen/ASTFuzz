@@ -7,11 +7,13 @@ var espath = require('./espath/lib');
 var random = require('./random');
 
 var generator = require('./esbuilder');
-
+var sleep = require('system-sleep');
 
 var rf=require("fs");
 
+console.log = function() {}
 
+var tmpfile = "/dev/shm/r"+process.pid+".js"
 /**
  * 
  * Tools function while mutate and generate 
@@ -71,12 +73,16 @@ function testBuilder(){
     //rf.writeFileSync('page.js',page);
 }
 
-//testRun()
-testBuilder()
+var counter=0;
+var success=0;
+
+//testRun(0)
+//testBuilder()
 
 for(let i=0;i<10000;i++){
     //console.log(i);
     //testBuilder();
+    if (!testRun(i)) break;
 }
 
 
@@ -224,7 +230,7 @@ function testMutate(){
     rf.writeFileSync('page.json',dump(ast));
     var page = escodegen.generate(ast);
     // console.log(page);  
-    rf.writeFileSync('r.js',page);
+    rf.writeFileSync(tmpfile,page);
 }
 
 function testTraverse(){
@@ -256,9 +262,21 @@ function testTraverse(){
     });
 }
 
-function testRun(){
+function testRun(i){
     testMutate();
-    child_process.execFileSync("/Users/android/Project/webkit/WebKitBuild/Debug/bin/jsc",["r.js"],{timeout:4000});
+    console.error("started",i, 1.0*success/counter, counter);
+    counter++;
+    try {
+        console.error(child_process.execFileSync("/media/detlef/Fast/KALI/fuzzer/gecko-dev/js/src/fuzzbuild_OPT.OBJ/dist/bin/js",[tmpfile],{timeout:4000,stdio:'pipe'}));
+        //console.log(child_process.execFileSync("/media/detlef/Fast/KALI/fuzzer/ASTFuzz/a.out",["r.js"],{timeout:4000}));
+        success++;
+    } catch (err) {
+        //console.error(err);
+        if (err.signal == 'SIGSEGV') {console.error(err.signal,process.pid); return 0;}
+    }
+    console.error("done");
+    sleep(10000);
+    return 1;
 }
 
 
