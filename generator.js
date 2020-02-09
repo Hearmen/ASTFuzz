@@ -246,8 +246,11 @@ TrimStackTracePath = function(){};
 `
 var preSrcAst = esprima.parse(preSrc).body;
 
+//for (var i=0;i<10;i++)
+//    testMutate();
+//return;
 
-var ast = JSON.parse(raw);
+var ast = esprima.parse(raw);
 
 ast.body = preSrcAst.concat(ast.body);
 

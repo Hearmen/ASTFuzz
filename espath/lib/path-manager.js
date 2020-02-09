@@ -364,7 +364,7 @@ class PathManager{
             classType = new ValueInfo(0x0040);
             for(let method of node.body){
                 console.log(method);
-                if(/Identifier/.test(method.key.type)){
+                if(method.key && /Identifier/.test(method.key.type)){
                     classType.__props.set(method.key.name, this.acquire(method)._valueType);//this.__currentValueMap.get(property.key.name));
                 }
             }
@@ -374,7 +374,7 @@ class PathManager{
             valuetype = new ValueType(0x0040,["classType"+(this.__valueTable.size-1)]);
 
             for(let method of node.body){
-                if(/Identifier/.test(method.key.type)){
+                if(method.key && /Identifier/.test(method.key.type)){
                     this.__currentValueMap.delete(method.key.name);
                 }
             }

@@ -136,10 +136,12 @@ class ValueMap extends Map{
         super();
         if(src){
             for(let [k, vtype] of src){
+                if (vtype) {
                 let newType =  new ValueType(vtype.__type, vtype.__symIndex);
                 this.set(k,newType);
             }
         }
+    }
     }
 
     /**
@@ -366,10 +368,12 @@ class ValueType{
      * merge the two types
      */
     update(type){
+        if (type) {
         this.updateType(type.__type);
         if(type.__symIndex)
             this.updateSymIndex(type.__symIndex);
         else{}  // do nothing
+        }
     }
 
     setType(_type){
