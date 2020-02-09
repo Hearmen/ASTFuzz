@@ -79,6 +79,10 @@ var success=0;
 //testRun(0)
 //testBuilder()
 
+
+console.error(child_process.execFile("./SHM_TEST_set"));
+
+
 for(let i=0;i<10000;i++){
     //console.log(i);
     //testBuilder();

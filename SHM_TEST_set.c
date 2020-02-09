@@ -60,7 +60,8 @@ int main(int argc, char *argv[])
 	memcpy(addr, data, STORAGE_SIZE);
 
 	// wait for someone to read it
-	sleep(2000);
+	while (1)
+        sleep(2000);
 
 	// mmap cleanup
 	res = munmap(addr, STORAGE_SIZE);

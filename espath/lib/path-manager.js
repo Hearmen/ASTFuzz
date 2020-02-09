@@ -654,8 +654,11 @@ class PathManager{
         }
         if (objPath._valueType) {
             for(let availableType of objPath._valueType.__symIndex){
-                for(let [k, v] of this.__valueTable.get(availableType).__props){
-                    this.__currentValueMap.delete(k);
+                //if (this.__valueTable.get(availableType)) 
+                {
+                    for(let [k, v] of this.__valueTable.get(availableType).__props){
+                        this.__currentValueMap.delete(k);
+                    }
                 }
             }
         }
