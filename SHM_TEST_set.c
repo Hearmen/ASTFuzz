@@ -1,5 +1,6 @@
-//compile with gcc -o SHM_TEST_set SHM_TEST_set.c -lrt
-
+// compile with 
+// gcc -o SHM_TEST_set SHM_TEST_set.c -lrt
+// run fuzzilli patched javascript engine with environmentvariable SHM_ID=/SHM_TEST
 
 #include <stdio.h>
 #include <sys/mman.h>
