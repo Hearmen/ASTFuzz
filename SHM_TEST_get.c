@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
 	//memcpy(data, addr, STORAGE_SIZE);
 	data1 = addr;
     int counter=0;
-	printf("Size %u\n",  (*data1).num_edges);
+	//printf("Size %u\n",  (*data1).num_edges);
 	for (int i=0;i<data1->num_edges;i++) {
 		if (0 != data1->edges[i / 8] && (1 << (i % 8))) {
             //printf("cov\n");
@@ -63,6 +63,6 @@ int main(int argc, char *argv[])
         //else
         //    printf("-\n");
     }
-    printf(" %d / %u --> %6.2f\n",counter,data1->num_edges,100.0 * counter / data1->num_edges );
+    printf("Size %u :: %d / %u --> %6.2f\n",(*data1).num_edges,counter,data1->num_edges,100.0 * counter / data1->num_edges );
 	return 0;
 }

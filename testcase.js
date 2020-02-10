@@ -13,6 +13,17 @@ var rf=require("fs");
 
 console.log = function() {}
 
+/**
+* two command line arguments, first filename and second, if anything the shared memory is not rebuild
+*/
+
+
+
+if (process.argv[2])
+    base_file = process.argv[2];
+else
+    base_file = 'page.js';
+
 var tmpfile = "/dev/shm/r"+process.pid+".js"
 /**
  * 
@@ -79,16 +90,16 @@ var success=0;
 //testRun(0)
 //testBuilder()
 
+if (!process.argv[3]) {var cproc = child_process.execFile("./SHM_TEST_set");}
 
-console.error(child_process.execFile("./SHM_TEST_set"));
 
-
-for(let i=0;i<10000;i++){
+for(var i=0;i<10000000;i++){
     //console.log(i);
     //testBuilder();
-    if (!testRun(i)) break;
+    if (!testRun()) break;
 }
 
+if (!process.argv[3]) {cproc.kill('SIGINT');}
 
 function currentVaribles(path){
     let currentVaribles = [];
@@ -127,7 +138,7 @@ function currentLiteral(vars){
 
 function testMutate(){
 
-    var raw=rf.readFileSync("page.js","utf-8");
+    var raw=rf.readFileSync(base_file,"utf-8");
 
     var ast = esprima.parse(raw);
 
@@ -266,17 +277,18 @@ function testTraverse(){
     });
 }
 
-function testRun(i){
+function testRun(){
     testMutate();
-    console.error("started",i, 1.0*success/counter, success);
+    console.error("started ",counter, (100.0*success/counter).toFixed(2), success);
     counter++;
     try {
-        console.error(child_process.execFileSync("/media/detlef/Fast/KALI/fuzzer/gecko-dev/js/src/fuzzbuild_OPT.OBJ/dist/bin/js",[tmpfile],{timeout:4000,stdio:'pipe'}));
+        console.error(child_process.execFileSync("/media/detlef/Fast/KALI/fuzzer/gecko-dev/js/src/fuzzbuild_OPT.OBJ/dist/bin/js",[tmpfile],{timeout:4000,stdio:'pipe',encoding:'utf-8'}));
         //console.log(child_process.execFileSync("/media/detlef/Fast/KALI/fuzzer/ASTFuzz/a.out",["r.js"],{timeout:4000}));
+        console.error(child_process.execFileSync("./SHM_TEST_get",{encoding:'utf-8'}));
         success++;
     } catch (err) {
         //console.error(err);
-        if (err.signal == 'SIGSEGV') {console.error(err.signal,process.pid); return 0;}
+        if (err.signal == 'SIGSEGV') {console.error(err.signal,process.pid,err.stderr); return 0;}
     }
     console.error("done");
 //    sleep(10000);

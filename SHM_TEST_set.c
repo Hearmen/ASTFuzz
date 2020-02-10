@@ -8,10 +8,16 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <string.h>
+#include <signal.h>
 
 #define STORAGE_ID "/SHM_TEST"
 #define STORAGE_SIZE 0x100000
 #define DATA "Hello, World! From PID %d 0000000000000"
+
+int go_on = 1;
+void handle_sigint(int sigint) {
+    go_on = 0;
+}
 
 int main(int argc, char *argv[])
 {
@@ -22,7 +28,10 @@ int main(int argc, char *argv[])
 	void *addr;
 	char data[STORAGE_SIZE];
     char* shm_key = getenv("SHM_ID");
-        
+    signal(SIGINT, handle_sigint);    
+    signal(SIGTERM, handle_sigint);    
+    //signal(SIGABRT, handle_sigint);    
+    //signal(SIGKILL, handle_sigint);    
     
 	pid = getpid();
 	sprintf(data, DATA, pid);
@@ -60,8 +69,8 @@ int main(int argc, char *argv[])
 	memcpy(addr, data, STORAGE_SIZE);
 
 	// wait for someone to read it
-	while (1)
-        sleep(2000);
+	while (go_on)
+        sleep(1);
 
 	// mmap cleanup
 	res = munmap(addr, STORAGE_SIZE);
@@ -72,7 +81,11 @@ int main(int argc, char *argv[])
 	}
 
 	// shm_open cleanup
-	fd = shm_unlink(STORAGE_ID);
+	if (shm_key)
+    	fd = shm_unlink(shm_key);
+    else
+    	fd = shm_unlink(STORAGE_ID);
+
 	if (fd == -1)
 	{
 		perror("unlink");

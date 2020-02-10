@@ -462,7 +462,7 @@ class PathManager{
         path = this.acquire(node); 
         calleePath = this.acquire(node.callee);
         if(path){
-            if(calleePath._valueType.getType() & 0x20){
+            if(this.__valueTable.get(calleePath._valueType.getSymIndex(0x20)) && calleePath._valueType.getType() & 0x20){
                 console.log(calleePath._valueType);
                 path.setPathValue(this.__valueTable.get(calleePath._valueType.getSymIndex(0x20)).__desc.ret);
             }else{
@@ -532,10 +532,10 @@ class PathManager{
                 let propPath = this.acquire(node.left.property);
                 if(objPath._valueType && objPath._valueType.__type >= 0x0010){  // make sure obj is not a literal
                     valueInfo = this.__valueTable.get(objPath._valueType.getSymIndex(0x70));
-                    if(/Identifier/.test(propPath.node.type)){
+                    if(valueInfo && /Identifier/.test(propPath.node.type)){
                         valueInfo.updateProp(propPath.node.name,right_path.getType());
                     }
-                    else if(/Literal/.test(propPath.node.type)){
+                    else if(valueInfo && /Literal/.test(propPath.node.type)){
                         // if(valueInfo.__props.has(propPath.node.value)){
                         //     valueInfo.__props.get(propPath.node.value).update(right_path._valueType);
                         // }else{
@@ -639,7 +639,7 @@ class PathManager{
         if(objPath._valueType && (objPath._valueType.__type >= 0x10 || objPath._valueType.__type&0x0004 )){   // not a literal
             var objType = this.__valueTable.get(objPath._valueType.getSymIndex(0x74)); // get the value from valueTable
             if(/Identifier/.test(node.property.type)){  // update the value of current path
-                if(objType.hasProp(node.property.name)){
+                if(objType && objType.hasProp(node.property.name)){
                     path.setPathValue(objType.getProp(node.property.name));
                 }else{
                     //path._valueType = new ValueType();  // there is no prop in the obj 
@@ -655,10 +655,12 @@ class PathManager{
         if (objPath._valueType) {
             for(let availableType of objPath._valueType.__symIndex){
                 //if (this.__valueTable.get(availableType)) 
-                {
-                    for(let [k, v] of this.__valueTable.get(availableType).__props){
-                        this.__currentValueMap.delete(k);
-                    }
+                {	
+					if (this.__valueTable.get(availableType)) {
+                    	for(let [k, v] of this.__valueTable.get(availableType).__props){
+                    	    this.__currentValueMap.delete(k);
+                    	}
+					}
                 }
             }
         }
