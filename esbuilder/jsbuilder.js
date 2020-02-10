@@ -1571,14 +1571,17 @@ class Builder extends esbuilder.Builder{
                 break;
             }
 
-            /**if(this.state.needProperty && parent.type == estraverse.Syntax.MemberExpression){
+            if(this.state.needProperty && parent.type == estraverse.Syntax.MemberExpression){
+                /**
+                 * 
+                 */
                 console.log(parent);
                 console.log(parent.object);
                 let objValuetype  = this.pathManager.acquire(parent.object)._valueType;
                 var valueinfo = this.currentValueTable().get(objValuetype.getSymIndex(0x74));
-                node.name = random.randomElement([...valueinfo.getProps().keys()]);
+                if (valueinfo) {node.name = random.randomElement([...valueinfo.getProps().keys()]);}
                 break;
-            }*/
+            }
 
             if(this.state.needObject && parent.type == estraverse.Syntax.MemberExpression){
                 var visitied = [];
