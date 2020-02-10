@@ -279,7 +279,7 @@ function testTraverse(){
 
 function testRun(){
     testMutate();
-    console.error("started ",counter, (100.0*success/counter).toFixed(2), success);
+    console.error("started ", success, "of", counter, "->", (100.0*success/counter).toFixed(2), "%" );
     counter++;
     try {
         console.error(child_process.execFileSync("/media/detlef/Fast/KALI/fuzzer/gecko-dev/js/src/fuzzbuild_OPT.OBJ/dist/bin/js",[tmpfile],{timeout:4000,stdio:'pipe',encoding:'utf-8'}));

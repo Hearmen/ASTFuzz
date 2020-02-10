@@ -63,6 +63,6 @@ int main(int argc, char *argv[])
         //else
         //    printf("-\n");
     }
-    printf("Size %u :: %d / %u --> %6.2f\n",(*data1).num_edges,counter,data1->num_edges,100.0 * counter / data1->num_edges );
+    printf("SHM Edges %u :: %d / %u --> %6.2f coverage\n",(*data1).num_edges,counter,data1->num_edges,100.0 * counter / data1->num_edges );
 	return 0;
 }
