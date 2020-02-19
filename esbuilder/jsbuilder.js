@@ -8,6 +8,11 @@ var rawValue = require('./raw');
 
 var variable = require('./variable').default;
 var reference = require('./reference');
+//require('../espath/lib/path');
+
+var ValueInfo = require('../espath/lib/path').valueinfo;
+var ValueType = require('../espath/lib/path').valuetype;
+var ValueMap = require('../espath/lib/path').valuemap;
 
 var definition = require('./definition');
 var PatternVisitor = require('./pattern-visitor').default;
@@ -1574,7 +1579,7 @@ class Builder extends esbuilder.Builder{
                 console.log(parent.object);
                 let objValuetype  = this.pathManager.acquire(parent.object)._valueType;
                 var valueinfo = this.currentValueTable().get(objValuetype.getSymIndex(0x74));
-                node.name = random.randomElement([...valueinfo.getProps().keys()]);
+                if (valueinfo) {node.name = random.randomElement([...valueinfo.getProps().keys()]);}
                 break;
             }
 

@@ -7,11 +7,24 @@ var espath = require('./espath/lib');
 var random = require('./random');
 
 var generator = require('./esbuilder');
-
+var sleep = require('system-sleep');
 
 var rf=require("fs");
 
+console.log = function() {}
 
+/**
+* two command line arguments, first filename and second, if anything the shared memory is not rebuild
+*/
+
+
+
+if (process.argv[2])
+    base_file = process.argv[2];
+else
+    base_file = 'page.js';
+
+var tmpfile = "/dev/shm/r"+process.pid+".js"
 /**
  * 
  * Tools function while mutate and generate 
@@ -71,14 +84,22 @@ function testBuilder(){
     //rf.writeFileSync('page.js',page);
 }
 
-//testRun()
-testBuilder()
+var counter=0;
+var success=0;
 
-for(let i=0;i<10000;i++){
+//testRun(0)
+//testBuilder()
+
+if (!process.argv[3]) {var cproc = child_process.execFile("./SHM_TEST_set");}
+
+
+for(var i=0;i<10000000;i++){
     //console.log(i);
     //testBuilder();
+    if (!testRun()) break;
 }
 
+if (!process.argv[3]) {cproc.kill('SIGINT');}
 
 function currentVaribles(path){
     let currentVaribles = [];
@@ -117,7 +138,7 @@ function currentLiteral(vars){
 
 function testMutate(){
 
-    var raw=rf.readFileSync("page.js","utf-8");
+    var raw=rf.readFileSync(base_file,"utf-8");
 
     var ast = esprima.parse(raw);
 
@@ -224,7 +245,7 @@ function testMutate(){
     rf.writeFileSync('page.json',dump(ast));
     var page = escodegen.generate(ast);
     // console.log(page);  
-    rf.writeFileSync('r.js',page);
+    rf.writeFileSync(tmpfile,page);
 }
 
 function testTraverse(){
@@ -258,7 +279,20 @@ function testTraverse(){
 
 function testRun(){
     testMutate();
-    child_process.execFileSync("/Users/android/Project/webkit/WebKitBuild/Debug/bin/jsc",["r.js"],{timeout:4000});
+    console.error("started ", success, "of", counter, "->", (100.0*success/counter).toFixed(2), "%" );
+    counter++;
+    try {
+        console.error(child_process.execFileSync("/media/detlef/Fast/KALI/fuzzer/gecko-dev/js/src/fuzzbuild_OPT.OBJ/dist/bin/js",[tmpfile],{timeout:4000,stdio:'pipe',encoding:'utf-8'}));
+        //console.log(child_process.execFileSync("/media/detlef/Fast/KALI/fuzzer/ASTFuzz/a.out",["r.js"],{timeout:4000}));
+        console.error(child_process.execFileSync("./SHM_TEST_get",{encoding:'utf-8'}));
+        success++;
+    } catch (err) {
+        //console.error(err);
+        if (err.signal == 'SIGSEGV') {console.error(err.signal,process.pid,err.stderr); return 0;}
+    }
+    console.error("done");
+//    sleep(10000);
+    return 1;
 }
 
 
